@@ -1,12 +1,15 @@
 # Sales-Forecast-Hub
+INTERN    : AJAYSAI CHINTHALA
 
 INTERN ID : CMPCCDCPJ0
 
 A machine learning-powered web application that enables users to upload sales datasets, analyze trends, train forecasting models, and generate future sales predictions through an interactive dashboard.
 🚀 Project Overview
+
 Sales Forecast Hub helps businesses and analysts forecast future sales using machine learning techniques. Users can upload their own datasets, perform exploratory data analysis, train predictive models, evaluate performance, and generate custom predictions.
 The application is built with Python and Streamlit, providing an intuitive interface without requiring programming knowledge.
 ✨ Features
+
 📂 Dataset Upload
 Upload CSV sales datasets
 Preview uploaded data

@@ -1,0 +1,106 @@
+Build a complete Sales Forecasting Web Application using Python, Streamlit, Pandas, NumPy, Matplotlib, Seaborn, and Scikit-Learn.
+
+Project Requirements:
+
+Title:
+Sales Forecasting System
+
+Objective:
+Allow users to upload their own sales dataset and generate sales predictions using machine learning.
+
+Features:
+
+1. Home Page
+- Professional UI using Streamlit
+- Project title and description
+- Sidebar navigation
+
+2. Dataset Upload
+- Allow user to upload CSV files
+- Validate uploaded file
+- Show dataset preview
+- Display dataset shape and column names
+
+3. Data Analysis
+- Display summary statistics
+- Show missing values
+- Correlation heatmap
+- Histograms
+- Pair plots where applicable
+
+4. Feature Selection
+- Let user choose target column
+- Let user choose feature columns
+- Validate selections
+
+5. Data Preprocessing
+- Handle missing values
+- Encode categorical columns
+- Train-test split
+- Feature scaling when required
+
+6. Machine Learning Models
+Implement:
+- Linear Regression
+- Random Forest Regressor
+- Decision Tree Regressor
+
+Allow user to select model.
+
+7. Model Evaluation
+Display:
+- R² Score
+- Mean Absolute Error (MAE)
+- Mean Squared Error (MSE)
+- Root Mean Squared Error (RMSE)
+
+8. Visualizations
+Generate:
+- Actual vs Predicted plot
+- Feature importance plot
+- Correlation heatmap
+- Sales trend graph
+
+9. Prediction Module
+- Allow user to enter custom feature values
+- Generate future sales prediction
+
+10. Export Results
+- Download predictions as CSV
+
+11. Documentation
+Generate:
+- README.md
+- requirements.txt
+- Project report in Markdown
+
+Folder Structure:
+
+SalesForecasting/
+│
+├── app.py
+├── requirements.txt
+├── README.md
+├── data/
+├── models/
+├── reports/
+└── assets/
+
+Requirements:
+- Clean code
+- Modular functions
+- Comments for important sections
+- Error handling
+- Professional UI
+
+Bonus Features:
+- Dark mode friendly interface
+- Model comparison dashboard
+- Upload multiple datasets
+- Automatic feature detection
+
+The application must run with:
+
+streamlit run app.py
+
+Generate complete production-ready code.

@@ -3,13 +3,20 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Sales Forecasting System API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: datasets
+    description: Dataset upload and analysis
+  - name: models
+    description: ML model training and evaluation
+  - name: predictions
+    description: Predictions and exports
+
 paths:
   /healthz:
     get:
@@ -24,6 +31,296 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /datasets/upload:
+    post:
+      operationId: uploadDataset
+      tags: [datasets]
+      summary: Upload CSV dataset
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/DatasetUpload"
+      responses:
+        "200":
+          description: Dataset uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DatasetInfo"
+        "400":
+          description: Invalid file
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /datasets/{datasetId}:
+    get:
+      operationId: getDataset
+      tags: [datasets]
+      summary: Get dataset info and preview
+      parameters:
+        - name: datasetId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Dataset info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DatasetInfo"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      operationId: deleteDataset
+      tags: [datasets]
+      summary: Delete a dataset
+      parameters:
+        - name: datasetId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /datasets/{datasetId}/analyze:
+    get:
+      operationId: analyzeDataset
+      tags: [datasets]
+      summary: Get statistical analysis of dataset
+      parameters:
+        - name: datasetId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Analysis results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DatasetAnalysis"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /datasets/{datasetId}/correlation:
+    get:
+      operationId: getCorrelationMatrix
+      tags: [datasets]
+      summary: Get correlation matrix for numeric columns
+      parameters:
+        - name: datasetId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Correlation matrix
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CorrelationMatrix"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /models/train:
+    post:
+      operationId: trainModel
+      tags: [models]
+      summary: Train a machine learning model
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TrainInput"
+      responses:
+        "200":
+          description: Model trained successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrainResult"
+        "400":
+          description: Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /models/{modelId}:
+    get:
+      operationId: getModel
+      tags: [models]
+      summary: Get trained model info and evaluation metrics
+      parameters:
+        - name: modelId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Model details and metrics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrainResult"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      operationId: deleteModel
+      tags: [models]
+      summary: Delete a trained model
+      parameters:
+        - name: modelId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /models/{modelId}/predict:
+    post:
+      operationId: predict
+      tags: [predictions]
+      summary: Run custom prediction with user-provided feature values
+      parameters:
+        - name: modelId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PredictInput"
+      responses:
+        "200":
+          description: Prediction result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PredictResult"
+        "400":
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /models/{modelId}/predictions/export:
+    get:
+      operationId: exportPredictions
+      tags: [predictions]
+      summary: Export test set predictions as CSV
+      parameters:
+        - name: modelId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: CSV file
+          content:
+            text/csv:
+              schema:
+                type: string
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /models/compare:
+    post:
+      operationId: compareModels
+      tags: [models]
+      summary: Compare metrics across multiple trained models
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompareInput"
+      responses:
+        "200":
+          description: Comparison results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompareResult"
+
+  /datasets:
+    get:
+      operationId: listDatasets
+      tags: [datasets]
+      summary: List all uploaded datasets
+      responses:
+        "200":
+          description: List of datasets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DatasetSummary"
+
+  /models:
+    get:
+      operationId: listModels
+      tags: [models]
+      summary: List all trained models
+      responses:
+        "200":
+          description: List of models
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ModelSummary"
+
 components:
   schemas:
     HealthStatus:
@@ -31,6 +328,326 @@ components:
       properties:
         status:
           type: string
-      required:
-        - status
+      required: [status]
 
+    DatasetUpload:
+      type: object
+      properties:
+        file:
+          type: string
+          format: binary
+      required: [file]
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required: [error]
+
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+      required: [success]
+
+    ColumnInfo:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          enum: [numeric, categorical, datetime, unknown]
+        missingCount:
+          type: integer
+        missingPercent:
+          type: number
+        uniqueCount:
+          type: integer
+        sampleValues:
+          type: array
+          items:
+            type: string
+      required: [name, type, missingCount, missingPercent, uniqueCount, sampleValues]
+
+    DatasetInfo:
+      type: object
+      properties:
+        id:
+          type: string
+        filename:
+          type: string
+        rowCount:
+          type: integer
+        columnCount:
+          type: integer
+        columns:
+          type: array
+          items:
+            $ref: "#/components/schemas/ColumnInfo"
+        preview:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+        uploadedAt:
+          type: string
+      required: [id, filename, rowCount, columnCount, columns, preview, uploadedAt]
+
+    DatasetSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        filename:
+          type: string
+        rowCount:
+          type: integer
+        columnCount:
+          type: integer
+        uploadedAt:
+          type: string
+      required: [id, filename, rowCount, columnCount, uploadedAt]
+
+    ColumnStats:
+      type: object
+      properties:
+        column:
+          type: string
+        mean:
+          type: ["number", "null"]
+        median:
+          type: ["number", "null"]
+        std:
+          type: ["number", "null"]
+        min:
+          type: ["number", "null"]
+        max:
+          type: ["number", "null"]
+        q25:
+          type: ["number", "null"]
+        q75:
+          type: ["number", "null"]
+        histogram:
+          type: array
+          items:
+            type: object
+            properties:
+              bin:
+                type: string
+              count:
+                type: integer
+            required: [bin, count]
+      required: [column, mean, median, std, min, max, q25, q75, histogram]
+
+    DatasetAnalysis:
+      type: object
+      properties:
+        datasetId:
+          type: string
+        totalRows:
+          type: integer
+        totalColumns:
+          type: integer
+        numericColumns:
+          type: array
+          items:
+            type: string
+        categoricalColumns:
+          type: array
+          items:
+            type: string
+        missingValueSummary:
+          type: array
+          items:
+            type: object
+            properties:
+              column:
+                type: string
+              missing:
+                type: integer
+              percent:
+                type: number
+            required: [column, missing, percent]
+        columnStats:
+          type: array
+          items:
+            $ref: "#/components/schemas/ColumnStats"
+        salesTrend:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+      required: [datasetId, totalRows, totalColumns, numericColumns, categoricalColumns, missingValueSummary, columnStats]
+
+    CorrelationMatrix:
+      type: object
+      properties:
+        columns:
+          type: array
+          items:
+            type: string
+        values:
+          type: array
+          items:
+            type: array
+            items:
+              type: number
+      required: [columns, values]
+
+    ModelMetrics:
+      type: object
+      properties:
+        r2:
+          type: number
+        mae:
+          type: number
+        mse:
+          type: number
+        rmse:
+          type: number
+      required: [r2, mae, mse, rmse]
+
+    ActualVsPredicted:
+      type: object
+      properties:
+        index:
+          type: integer
+        actual:
+          type: number
+        predicted:
+          type: number
+      required: [index, actual, predicted]
+
+    FeatureImportance:
+      type: object
+      properties:
+        feature:
+          type: string
+        importance:
+          type: number
+      required: [feature, importance]
+
+    TrainInput:
+      type: object
+      properties:
+        datasetId:
+          type: string
+        modelType:
+          type: string
+          enum: [linear_regression, random_forest, decision_tree]
+        targetColumn:
+          type: string
+        featureColumns:
+          type: array
+          items:
+            type: string
+        testSplitRatio:
+          type: number
+      required: [datasetId, modelType, targetColumn, featureColumns]
+
+    TrainResult:
+      type: object
+      properties:
+        modelId:
+          type: string
+        datasetId:
+          type: string
+        modelType:
+          type: string
+        targetColumn:
+          type: string
+        featureColumns:
+          type: array
+          items:
+            type: string
+        trainRows:
+          type: integer
+        testRows:
+          type: integer
+        metrics:
+          $ref: "#/components/schemas/ModelMetrics"
+        actualVsPredicted:
+          type: array
+          items:
+            $ref: "#/components/schemas/ActualVsPredicted"
+        featureImportance:
+          type: array
+          items:
+            $ref: "#/components/schemas/FeatureImportance"
+        trainedAt:
+          type: string
+      required: [modelId, datasetId, modelType, targetColumn, featureColumns, trainRows, testRows, metrics, actualVsPredicted, featureImportance, trainedAt]
+
+    ModelSummary:
+      type: object
+      properties:
+        modelId:
+          type: string
+        datasetId:
+          type: string
+        modelType:
+          type: string
+        targetColumn:
+          type: string
+        metrics:
+          $ref: "#/components/schemas/ModelMetrics"
+        trainedAt:
+          type: string
+      required: [modelId, datasetId, modelType, targetColumn, metrics, trainedAt]
+
+    PredictInput:
+      type: object
+      properties:
+        features:
+          type: object
+          additionalProperties:
+            type: number
+      required: [features]
+
+    PredictResult:
+      type: object
+      properties:
+        prediction:
+          type: number
+        modelType:
+          type: string
+        targetColumn:
+          type: string
+        inputFeatures:
+          type: object
+          additionalProperties:
+            type: number
+      required: [prediction, modelType, targetColumn, inputFeatures]
+
+    CompareInput:
+      type: object
+      properties:
+        modelIds:
+          type: array
+          items:
+            type: string
+      required: [modelIds]
+
+    CompareResult:
+      type: object
+      properties:
+        models:
+          type: array
+          items:
+            type: object
+            properties:
+              modelId:
+                type: string
+              modelType:
+                type: string
+              targetColumn:
+                type: string
+              metrics:
+                $ref: "#/components/schemas/ModelMetrics"
+            required: [modelId, modelType, targetColumn, metrics]
+      required: [models]
